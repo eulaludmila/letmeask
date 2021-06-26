@@ -6,6 +6,8 @@ import {Button} from '../components/Button'
 import { Link, useHistory } from 'react-router-dom'
 import { database } from '../services/firebase'
 import { useAuth } from '../hooks/useAuth'
+import {Toaster} from 'react-hot-toast';
+import { showToast } from '../utils/toast'
 
 export function NewRoom(){
   const {user} = useAuth()
@@ -17,6 +19,7 @@ export function NewRoom(){
 
     //validar espaços antes e depois da string
     if(newRoom.trim() === ''){
+      showToast('error', 'Não colocar espaços na frente e final de frase');
       return;
     }
 
@@ -55,6 +58,7 @@ export function NewRoom(){
           <p>Que entrar em uma sala existente: <Link to="/">Clique aqui</Link></p>
         </div>
       </main>
+      <Toaster/>
     </div>
   )
 }

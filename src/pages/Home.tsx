@@ -7,15 +7,17 @@ import {Button} from '../components/Button'
 import { useAuth } from '../hooks/useAuth'
 import { FormEvent, useState } from 'react'
 import { database } from '../services/firebase'
+import {Toaster} from 'react-hot-toast';
+import { showToast } from '../utils/toast'
 
 export function Home(){
   const {user, signInWithGoogle} = useAuth();
   const history = useHistory();
   const [roomCode, setRoomCode] = useState("");
 
-  function handleCreateRoom(){
+  async function handleCreateRoom(){
     if(!user){
-      signInWithGoogle();
+      await signInWithGoogle();
     }
     history.push('/rooms/new');
   }
@@ -25,6 +27,7 @@ export function Home(){
 
     //validar espaços antes e depois da string
     if(roomCode.trim() === ''){
+      showToast('error', 'Não colocar espaços na frente e final de frase');
       return;
     }
 
@@ -32,12 +35,12 @@ export function Home(){
     const roomRef = await database.ref(`rooms/${roomCode}`).get();
 
     if(!roomRef.exists()){
-      alert('Room does not exists.');
+      showToast('error', 'Essa sala não existe');
       return;
     }
 
     if(roomRef.val().endedAt){
-      alert("Room already closed");
+      showToast('error', 'Sala já foi fechada');
       return;
     }
 
@@ -64,6 +67,7 @@ export function Home(){
           </form>
         </div>
       </main>
+      <Toaster/>
     </div>
   )
 }

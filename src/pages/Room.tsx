@@ -8,6 +8,8 @@ import { useAuth } from '../hooks/useAuth';
 import { database } from '../services/firebase';
 import { Question } from '../components/Question';
 import { useRoom } from '../hooks/useRoom';
+import {showToast} from '../utils/toast';
+import {Toaster} from 'react-hot-toast';
 
 type RoomParams = {
   id: string;
@@ -24,11 +26,13 @@ export function Room() {
     event.preventDefault();
 
     if (newQuestion.trim() === '') {
+      showToast('error', 'Não colocar espaços na frente e final de frase');
       return;
     }
 
     if (!user) {
-      throw new Error('You are be logged in');
+      showToast('error', 'Você precisa realizar log-in para acessar essa área');
+      return;
     }
 
     const question = {
@@ -36,14 +40,13 @@ export function Room() {
       author: {
         name: user.name,
         avatar: user.avatar
-
       },
       isHighlighted: false,
       isAnswered: false,
     }
 
     await database.ref(`rooms/${roomId}/questions`).push(question);
-
+    showToast('success', 'Pergunta enviada com sucesso');
     setNewQuestion('');
   }
 
@@ -91,8 +94,11 @@ export function Room() {
                 key={question.id}
                 content={question.content}
                 author={question.author}
+                isAnswered={question.isAnswered}
+                isHighlighted={question.isHighlighted}
               >
-                <button
+                {!question.isAnswered && (
+                  <button
                   className={`like-button ${question.likeId ? 'liked' : ''}`}
                   type="button"
                   aria-label="Marcar como gostei"
@@ -104,12 +110,14 @@ export function Room() {
                   </svg>
 
                 </button>
+                )}
               </Question>
             )
           })}
         </div>
 
       </main>
+      <Toaster/>
     </div>
   )
 }

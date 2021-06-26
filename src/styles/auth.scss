@@ -38,6 +38,16 @@
     justify-content: center;
   }
 
+  @media(max-width: 1000px){
+    aside{
+      display: none
+    }
+
+    main{
+      flex: 1
+    }
+  }
+
   .main-content{
     display: flex;
     flex-direction: column;

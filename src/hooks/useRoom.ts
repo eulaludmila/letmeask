@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { database } from "../services/firebase";
 import { useAuth } from "./useAuth";
 
@@ -32,6 +33,7 @@ type FirebaseQuestions = Record<string, {
 
 
 export function useRoom(roomId: string){
+  const history = useHistory();
   const {user} = useAuth();
   const [questions, setQuestions] = useState<QuestionType[]>([])
   const [title, setTitle] = useState('');
@@ -42,7 +44,12 @@ export function useRoom(roomId: string){
     //escutar apenas um vez
     roomRef.on('value', room => {
       const databaseRoom = room.val();
+      if(databaseRoom == null){
+        history.push('/');
+        return;
+      }
       const firebaseQuestions: FirebaseQuestions = databaseRoom.questions ?? {};
+      
       const parsedQuestions = Object.entries(firebaseQuestions).map(([key, value]) => {
         return {
           id: key,
@@ -61,7 +68,7 @@ export function useRoom(roomId: string){
     return () => {
       roomRef.off('value');
     }
-  }, [roomId, user?.id])
+  }, [roomId, user?.id, history])
 
   return { questions, title}
 }

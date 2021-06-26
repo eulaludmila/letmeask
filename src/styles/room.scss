@@ -27,6 +27,7 @@
   main {
     max-width: 800px;
     margin: 0 auto;
+    padding: 0 20px;
 
     .room-title {
       margin: 32px 0 24px;
@@ -105,5 +106,12 @@
     .question-list{
       margin-top: 32px;
     }
+  }
+}
+
+@media (max-width: 460px){
+  #page-room .content, main .room-title, #page-room .content > div{
+    flex-direction: column;
+    gap: 8px;
   }
 }

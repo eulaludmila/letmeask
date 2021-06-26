@@ -7,34 +7,61 @@ import { RoomCode } from "../components/RoomCode"
 // import { database } from '../services/firebase';
 import { Question } from '../components/Question';
 import { useRoom } from '../hooks/useRoom';
-import deleImg from '../assets/images/delete.svg'
+import deleteImg from '../assets/images/delete.svg'
+import checkImg from '../assets/images/check.svg'
+import answerImg from '../assets/images/answer.svg'
 import { database } from '../services/firebase';
+import {Toaster} from 'react-hot-toast';
+import { showToast } from '../utils/toast';
+import { useAuth } from '../hooks/useAuth';
 
 type RoomParams = {
   id: string;
 }
 
 export function AdminRoom() {
-  // const { user } = useAuth()
+  const { user } = useAuth()
   const history = useHistory();
   const params = useParams<RoomParams>();
   const roomId = params.id
   const { questions, title } = useRoom(roomId);
 
-  async function handleDeleteQuestion(questionId: string){
-    if(window.confirm('Tem certeza que deseja excluir essa pergunta?')){
-      await database.ref(`rooms/${roomId}/questions/${questionId}`).remove();
-    }
-  }
-
-  async function handleEndRoom(){
-    database.ref(`rooms/${roomId}`).update({
-      endedAt: new Date()
-    })
-
+  if(!user){
     history.push(`/`);
   }
 
+  async function handleDeleteQuestion(questionId: string) {
+    if (window.confirm('Tem certeza que deseja excluir essa pergunta?')) {
+      await database.ref(`rooms/${roomId}/questions/${questionId}`).remove();
+      showToast('success', 'Pergunta excluída com sucesso!');
+    }
+  }
+
+  async function handleEndRoom() {
+    await database.ref(`rooms/${roomId}`).update({
+      endedAt: new Date()
+    })
+    history.push(`/`);
+
+  }
+
+  async function handleCheckQuestionAsAnswered(questionId: string) {
+
+    await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
+      isAnswered: true,
+    });
+    showToast('success', 'Pergunta finalizada!');
+
+  }
+
+  async function handleHighlightQuestion(questionId: string) {
+    console.log('id: ', questionId);
+
+    await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
+      isHighlighted: true,
+    });
+    showToast('success', 'Pergunta respondida com sucesso!');
+  }
   return (
     <div id="page-room">
       <header>
@@ -58,9 +85,23 @@ export function AdminRoom() {
                 key={question.id}
                 content={question.content}
                 author={question.author}
+                isAnswered={question.isAnswered}
+                isHighlighted={question.isHighlighted}
               >
+                {!question.isAnswered &&
+                  (
+                    <>
+                      <button type="button" onClick={() => handleCheckQuestionAsAnswered(question.id)}>
+                        <img src={checkImg} alt="Marcar pergunta como respondida" />
+                      </button>
+                      <button type="button" onClick={() => handleHighlightQuestion(question.id)}>
+                        <img src={answerImg} alt="Dar destaque à pergunta" />
+                      </button>
+                    </>
+                  )
+                }
                 <button type="button" onClick={() => handleDeleteQuestion(question.id)}>
-                  <img src={deleImg} alt="Excluir"/>
+                  <img src={deleteImg} alt="Remover Pergunta" />
                 </button>
               </Question>
             )
@@ -68,6 +109,7 @@ export function AdminRoom() {
         </div>
 
       </main>
+      <Toaster/>
     </div>
   )
 }
