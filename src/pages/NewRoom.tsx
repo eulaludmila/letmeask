@@ -3,15 +3,34 @@ import illustrationImg from '../assets/images/illustration.svg'
 import logoImg from '../assets/images/logo.svg'
 import '../styles/auth.scss'
 import {Button} from '../components/Button'
-import { Link } from 'react-router-dom'
-import { AuthContext } from '../contexts/AuthContext'
+import { Link, useHistory } from 'react-router-dom'
+import { database } from '../services/firebase'
+import { useAuth } from '../hooks/useAuth'
 
 export function NewRoom(){
-
+  const {user} = useAuth()
   const [newRoom, setNewRoom] = useState('');
+  const history = useHistory();
 
   async function handleCreateRoom(event: FormEvent){
     event.preventDefault();
+
+    //validar espaços antes e depois da string
+    if(newRoom.trim() === ''){
+      return;
+    }
+
+    //Referencia para um registro de dado no banco de dados (linha, coluna, categoria)
+    const roomRef = database.ref('rooms');
+
+    //criando uma nova sala
+    const firebaseRoom = await roomRef.push({
+      title: newRoom,
+      authorId: user?.id
+    });
+
+    history.push(`/rooms/${firebaseRoom.key}`)
+    
   }
 
   return(
@@ -24,8 +43,7 @@ export function NewRoom(){
       <main>
         <div className="main-content">
           <img src={logoImg} alt="Letmeask"/>
-          <h2>Criar sala</h2>
-          <div className="separator">ou entre em uma sala</div>
+          <h2>Criar sala uma nova sala</h2>
           <form onSubmit={handleCreateRoom}>
             <input 
             type="text" 
