@@ -105,6 +105,15 @@
 
     .question-list{
       margin-top: 32px;
+
+      .message-criador{
+        font-size: 16px;
+        font-weight: 500;
+
+        a{
+          text-decoration: underline;
+        }
+      }
     }
   }
 }

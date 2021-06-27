@@ -1,6 +1,6 @@
 import logoImg from '../assets/images/logo.svg';
 import { Button } from '../components/Button'
-import { useHistory, useParams } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import '../styles/room.scss'
 import { RoomCode } from "../components/RoomCode"
 // import { useAuth } from '../hooks/useAuth';
@@ -14,6 +14,7 @@ import { database } from '../services/firebase';
 import {Toaster} from 'react-hot-toast';
 import { showToast } from '../utils/toast';
 import { useAuth } from '../hooks/useAuth';
+import { useEffect } from 'react';
 
 type RoomParams = {
   id: string;
@@ -24,11 +25,12 @@ export function AdminRoom() {
   const history = useHistory();
   const params = useParams<RoomParams>();
   const roomId = params.id
-  const { questions, title } = useRoom(roomId);
+  const { questions, title,authorId } = useRoom(roomId);
 
-  if(!user){
-    history.push(`/`);
-  }
+  useEffect(() => {
+    console.log('USEEEEER: ', user);
+    
+  },[user])
 
   async function handleDeleteQuestion(questionId: string) {
     if (window.confirm('Tem certeza que deseja excluir essa pergunta?')) {
@@ -69,7 +71,7 @@ export function AdminRoom() {
           <img src={logoImg} alt="Letmeask" />
           <div>
             <RoomCode code={roomId} />
-            <Button isOutlined={true} onClick={handleEndRoom}>Encerrar Sala</Button>
+            {user?.id === authorId && <Button isOutlined={true} onClick={handleEndRoom}>Encerrar Sala</Button>}
           </div>
         </div>
       </header>
@@ -79,7 +81,8 @@ export function AdminRoom() {
           {questions.length > 0 && <span>{questions.length} pergunta(s)</span>}
         </div>
         <div className="question-list">
-          {questions.map(question => {
+          {user?.id !== authorId && <p className="message-criador">Para visualizar essa sala, você deve ser o criador dela :) <Link to="/">clique aqui</Link> para retornar ao início</p>}
+          {user?.id === authorId && questions.map(question => {
             return (
               <Question
                 key={question.id}

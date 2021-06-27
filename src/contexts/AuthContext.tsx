@@ -25,12 +25,14 @@ export function AuthContextProvider(props:AuthContextProviderProps){
   useEffect(() => {
     //Verificar se o usuário já esteve logado, se já esteve realizará o login
     const unsubscribe = auth.onAuthStateChanged(user => {
+      
       if (user) {
         const { displayName, photoURL, uid } = user;
         if (!displayName || !photoURL) {
           showToast('error', 'Informações ausentes da Conta do Google');
           return;
         }
+        console.log('USER2: ', user);
 
         setUser({
           id: uid,
