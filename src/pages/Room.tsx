@@ -1,6 +1,6 @@
 import logoImg from '../assets/images/logo.svg';
 import { Button } from '../components/Button'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import '../styles/room.scss'
 import { RoomCode } from "../components/RoomCode"
 import { FormEvent, useState } from 'react';
@@ -63,7 +63,9 @@ export function Room() {
     <div id="page-room">
       <header>
         <div className="content">
-          <img src={logoImg} alt="Letmeask" />
+          <Link to="/">
+            <img src={logoImg} alt="Letmeask" />
+          </Link>
           <RoomCode code={roomId} />
         </div>
       </header>

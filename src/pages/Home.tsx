@@ -62,8 +62,8 @@ export function Home(){
           </button>
           <div className="separator">ou entre em uma sala</div>
           <form onSubmit={handleJoinRoom}>
-            <input type="text" placeholder="Digite o código da sala" onChange={event => setRoomCode(event.target.value)}/>
-            <Button type="submit">Entrar na sala</Button>
+            <input type="text" value={roomCode} placeholder="Digite o código da sala" onChange={event => setRoomCode(event.target.value)}/>
+            <Button disabled={roomCode !== '' ? false : true} type="submit">Entrar na sala</Button>
           </form>
         </div>
       </main>
