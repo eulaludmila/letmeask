@@ -28,6 +28,25 @@ npm install
 #or
 yarn add
 ```
+
+Em segundo, crie um arquivo na raiz do projeto com o nome de ".env.local" e adicione seus acessos ao firebase e etc.
+Obs.: No firebase, adicione o seu projeto do tipo Web
+
+![firebase](https://user-images.githubusercontent.com/47863213/123531707-3a599d00-d6dd-11eb-9539-28bf8cf92199.png)
+
+Siga todos os passos e você terá as informações abaixo para adicionar
+
+```
+# firebase
+REACT_APP_API_KEY={CHAVE_API}
+REACT_APP_AUTH_DOMAIN={DOMÍNIO}
+REACT_APP_DATABASE_URL={URL_BANCO_DE_DADOS}
+REACT_APP_PROJECT_ID={ID_PROJETO}
+REACT_APP_STORAGE_BUCKET={ID_PROJETO_WEB}
+REACT_APP_MESSAGING_SENDER_ID={SENDER_ID}
+REACT_APP_APP_ID={ID_PROJETO_WEB}
+```
+
 Depois, pode roda o server tranquilamente
 
 ```bash
